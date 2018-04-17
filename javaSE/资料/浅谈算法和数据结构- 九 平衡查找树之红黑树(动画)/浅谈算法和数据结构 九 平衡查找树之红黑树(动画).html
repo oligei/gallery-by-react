@@ -1,0 +1,742 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta name="exporter-version" content="Evernote Mac 6.9.2 (454158)"/><meta name="keywords" content="that's, very good"/><meta name="author" content="zhaidj007@hotmail.com"/><meta name="created" content="2017-04-30 09:29:06 +0000"/><meta name="source" content="desktop.mac"/><meta name="updated" content="2017-05-05 01:38:31 +0000"/><title>浅谈算法和数据结构: 九 平衡查找树之红黑树(动画)</title></head><body>
+<div>
+<div>左旋转右旋转动画很好</div>
+<div><br/></div>
+<div><a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html">http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html</a></div>
+<div>第一 他是一种二叉树
+<div>特征:</div>
+<div>二叉树是每个节点最多有两个子树的树结构。通常子树被称作“左子树”（left subtree）和“右子树”（right subtree）。</div>
+<div>第二 他是一种二叉查找树</div>
+<div>特征:</div>
+<div>1.若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值；</div>
+<div>2.若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值；</div>
+<div>3.它的左、右子树也分别为二叉排序树。</div>
+<div>第三 他是一种平衡二叉查找数</div>
+<div>特征:</div>
+</div>
+<div>平衡指所有叶子的深度趋于平衡(不会出现一个叶特别深,或者一个叶特别浅的情况),更广义的是指在树上所有可能查找的均摊复杂度偏低。</div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<h1><a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html">浅谈算法和数据结构: 九 平衡查找树之红黑树</a></h1>
+<div>
+<div>
+<p>前面一篇文章介绍了<a target="_blank" href="http://www.cnblogs.com/yangecnu/p/Introduce-2-3-Search-Tree.html">2-3查找树</a>， 可以看到，2-3查找树能保证在插入元素之后能保持树的平衡状态，最坏情况下即所有的子节点都是2-node，树的高度为lgN，从而保证了最坏情况下的 时间复杂度。但是2-3树实现起来比较复杂，本文介绍一种简单实现2-3树的数据结构，即红黑树（Red-Black Tree）</p>
+<h1>定义</h1>
+<p>红黑树的主要是想对2-3查找树进行编码，尤其是对2-3查找树中的3-nodes节点添加额外的信息。红黑树中将节点之间的链接分为两种不同类 型，红色链接，他用来链接两个2-nodes节点来表示一个3-nodes节点。黑色链接用来链接普通的2-3节点。特别的，使用红色链接的两个2- nodes来表示一个3-nodes节点，并且向左倾斜，即一个2-node是另一个2-node的左子节点。这种做法的好处是查找的时候不用做任何修 改，和普通的二叉查找树相同。</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270024350308474.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/F9CE7DF9-38FA-4CF7-AFE3-660DE8CBC388.png" height="249" width="595"/></a></p>
+<p>根据以上描述，红黑树定义如下：</p>
+<p>红黑树是一种具有红色和黑色链接的平衡查找树，同时满足：</p>
+<ul>
+<li>红色节点向左倾斜</li>
+<li>一个节点不可能有两个红色链接</li>
+<li>整个书完全黑色平衡，即从根节点到所以叶子结点的路径上，黑色链接的个数都相同。</li>
+</ul>
+<p>下图可以看到红黑树其实是2-3树的另外一种表现形式：如果我们将红色的连线水平绘制，那么他链接的两个2-node节点就是2-3树中的一个3-node节点了。</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270024386864059.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/BEFDF5EA-F04D-43B4-AEBE-3DCE7A5CAE4F.png" height="607" width="594"/></a></p>
+<h1>表示</h1>
+<p>我们可以在二叉查找树的每一个节点上增加一个新的表示颜色的标记。该标记指示该节点指向其父节点的颜色。</p>
+<pre>
+<span style="color: blue;">private const bool </span>RED = <span style="color: blue;">true</span>;
+<span style="color: blue;">private const bool </span>BLACK = <span style="color: blue;">false</span>;
+
+<span style="color: blue;">private </span><span style="color: #2b91af;">Node </span>root;
+
+<span style="color: blue;">class </span><span style="color: #2b91af;">Node
+</span>{
+    <span style="color: blue;">public </span><span style="color: #2b91af;">Node </span>Left { <span style="color: blue;">get</span>; <span style="color: blue;">set</span>; }
+    <span style="color: blue;">public </span><span style="color: #2b91af;">Node </span>Right { <span style="color: blue;">get</span>; <span style="color: blue;">set</span>; }
+    <span style="color: blue;">public </span>TKey Key { <span style="color: blue;">get</span>; <span style="color: blue;">set</span>; }
+    <span style="color: blue;">public </span>TValue Value { <span style="color: blue;">get</span>; <span style="color: blue;">set</span>; }
+    <span style="color: blue;">public int </span>Number { <span style="color: blue;">get</span>; <span style="color: blue;">set</span>; }
+    <span style="color: blue;">public bool </span>Color { <span style="color: blue;">get</span>; <span style="color: blue;">set</span>; }
+
+    <span style="color: blue;">public </span>Node(TKey key, TValue value,<span style="color: blue;">int </span>number, <span style="color: blue;">bool </span>color)
+    {
+        <span style="color: blue;">this</span>.Key = key;
+        <span style="color: blue;">this</span>.Value = value;
+        <span style="color: blue;">this</span>.Number = number;
+        <span style="color: blue;">this</span>.Color = color;
+    }
+}
+
+<span style="color: blue;">private bool </span>IsRed(<span style="color: #2b91af;">Node </span>node)
+{
+    <span style="color: blue;">if </span>(node == <span style="color: blue;">null</span>) <span style="color: blue;">return false</span>;
+    <span style="color: blue;">return </span>node.Color == RED;
+}
+</pre>
+<p> <a href="http://images.cnitblog.com/blog/94031/201403/270024415306355.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/54AB6733-6635-48C7-91B5-AE84F7BAE51A.png" height="257" width="685"/></a></p>
+<h1>实现</h1>
+<h2>查找</h2>
+<p>红黑树是一种特殊的二叉查找树，他的查找方法也和二叉查找树一样，不需要做太多更改。</p>
+<p>但是由于红黑树比一般的二叉查找树具有更好的平衡，所以查找起来更快。</p>
+<pre>
+<span style="color: green;">//查找获取指定的值
+</span><span style="color: blue;">public override </span>TValue Get(TKey key)
+{
+    <span style="color: blue;">return </span>GetValue(root, key);
+}
+
+<span style="color: blue;">private </span>TValue GetValue(<span style="color: #2b91af;">Node </span>node, TKey key)
+{
+    <span style="color: blue;">if </span>(node == <span style="color: blue;">null</span>) <span style="color: blue;">return default</span>(TValue);
+    <span style="color: blue;">int </span>cmp = key.CompareTo(node.Key);
+    <span style="color: blue;">if </span>(cmp == 0) <span style="color: blue;">return </span>node.Value;
+    <span style="color: blue;">else if </span>(cmp &gt; 0) <span style="color: blue;">return </span>GetValue(node.Right, key);
+    <span style="color: blue;">else return </span>GetValue(node.Left, key);
+}
+</pre>
+<h2>平衡化</h2>
+<p>在介绍插入之前，我们先介绍如何让红黑树保持平衡，因为一般的，我们插入完成之后，需要对树进行平衡化操作以使其满足平衡化。</p>
+<h3><strong>旋转</strong></h3>
+<p>旋转又分为<strong>左旋</strong>和<strong>右旋</strong>。通常左旋操作用于将一个向右倾斜的红色链接旋转为向左链接。对比操作前后，可以看出，该操作实际上是将红线链接的两个节点中的一个较大的节点移动到根节点上。</p>
+<p>左旋操作如下图：</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270024439683412.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/F293CC1D-C88A-4A3E-A32A-AAF4772F3FD9.png" height="204" width="284"/></a> <a href="http://images.cnitblog.com/blog/94031/201403/270024462024295.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/568EFFA2-A848-42F9-99CB-0F27643F47EA.png" height="203" width="245"/></a></p>
+<pre>
+<span style="color: green;">//左旋转
+</span><span style="color: blue;">private </span><span style="color: #2b91af;">Node </span>RotateLeft(<span style="color: #2b91af;">Node </span>h)
+{
+    <span style="color: #2b91af;">Node </span>x = h.Right;
+    <span style="color: green;">//将x的左节点复制给h右节点
+    </span>h.Right = x.Left;
+    <span style="color: green;">//将h复制给x右节点
+    </span>x.Left = h;
+    x.Color = h.Color;
+    h.Color = RED;
+    <span style="color: blue;">return </span>x;
+}
+</pre>
+<p>左旋的动画效果如下：</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270024492492764.gif"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/49F9081E-9383-4D8A-9C29-B609FD34CD1C.gif" height="241" width="329"/></a></p>
+<p><strong>右旋</strong>是左旋的逆操作，过程如下：</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270024534995532.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/3F679088-D92B-42F3-8D8E-9E93E37C291F.png" height="224" width="255"/></a> <a href="http://images.cnitblog.com/blog/94031/201403/270024563745287.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/DBBBDCFA-5FC9-4C55-996A-82748C5D6BEC.png" height="223" width="283"/></a></p>
+<p>代码如下：</p>
+<pre>
+<span style="color: green;">//右旋转
+</span><span style="color: blue;">private </span><span style="color: #2b91af;">Node </span>RotateRight(<span style="color: #2b91af;">Node </span>h)
+{
+    <span style="color: #2b91af;">Node </span>x = h.Left;
+    h.Left = x.Right;
+    x.Right = h;
+
+    x.Color = h.Color;
+    h.Color = RED;
+    <span style="color: blue;">return </span>x;
+}
+</pre>
+<p>右旋的动画效果如下：</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270025006402285.gif"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/54BD1F3A-9A78-4DB3-8851-00312043E5D3.gif" height="258" width="301"/></a></p>
+<p><strong>颜色反转</strong></p>
+<p>当出现一个临时的4-node的时候，即一个节点的两个子节点均为红色，如下图：</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270025057181167.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/7411F5E9-D8D2-4F8D-B76F-9875FA6449E5.png" height="166" width="276"/></a> <a href="http://images.cnitblog.com/blog/94031/201403/270025083746221.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/3CB81C83-8831-4CD7-9D81-23A61EE81DF8.png" height="164" width="276"/></a></p>
+<p>这其实是个A，E，S 4-node连接，我们需要将E提升至父节点，操作方法很简单，就是把E对子节点的连线设置为黑色，自己的颜色设置为红色。</p>
+<p>有了以上基本操作方法之后，我们现在对应之前对<strong>2-3树的平衡操作来对红黑树进行平衡操作，</strong>这两者是可以一一对应的，如下图：</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270025114051462.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/1022DD19-9C36-413C-92B9-965C18FD09F9.png" height="437" width="444"/></a></p>
+<p>现在来讨论各种情况：</p>
+<p><strong>Case 1</strong> <strong>往一个2-node</strong><strong>节点底部插入新的节点</strong></p>
+<p>先热身一下，首先我们看对于只有一个节点的红黑树，插入一个新的节点的操作：</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270025142652689.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/9A643E56-0181-4FCC-9A65-FEAC5A8FAFB2.png" height="299" width="580"/></a></p>
+<p>这种情况很简单，只需要：</p>
+<ul>
+<li>标准的二叉查找树遍历即可。新插入的节点标记为红色</li>
+<li>如果新插入的节点在父节点的右子节点，则需要进行左旋操作</li>
+</ul>
+<p><strong>Case 2</strong><strong>往一个3-node</strong><strong>节点底部插入新的节点</strong></p>
+<p>先热身一下，假设我们往一个只有两个节点的树中插入元素，如下图，根据待插入元素与已有元素的大小，又可以分为如下三种情况：</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270025169054515.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/04428034-CE77-4437-A7AD-03C32BF9F209.png" height="366" width="596"/></a></p>
+<ul>
+<li>如果带插入的节点比现有的两个节点都大，这种情况最简单。我们只需要将新插入的节点连接到右边子树上即可，然后将中间的元素提升至根节点。这样根节点的左右子树都是红色的节点了，我们只需要调研FlipColor方法即可。其他情况经过反转操作后都会和这一样。</li>
+<li>如果插入的节点比最小的元素要小，那么将新节点添加到最左侧，这样就有两个连接红色的节点了，这是对中间节点进行右旋操作，使中间结点成为根节点。这是就转换到了第一种情况，这时候只需要再进行一次FlipColor操作即可。</li>
+<li>如果插入的节点的值位于两个节点之间，那么将新节点插入到左侧节点的右子节点。因为该节点的右子节点是红色的，所以需要进行左旋操作。操作完之后就变成第二种情况了，再进行一次右旋，然后再调用FlipColor操作即可完成平衡操作。</li>
+</ul>
+<p>有了以上基础，我们现在来总结一下往一个3-node节点底部插入新的节点的操作步骤，下面是一个典型的操作过程图：</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270025195462042.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/C4D18D83-26B3-42C6-9C60-15439CDBBD9A.png" height="259" width="591"/></a></p>
+<p>可以看出，操作步骤如下：</p>
+<ol>
+<li>执行标准的二叉查找树插入操作，新插入的节点元素用红色标识。</li>
+<li>如果需要对4-node节点进行旋转操作</li>
+<li>如果需要，调用FlipColor方法将红色节点提升</li>
+<li>如果需要，左旋操作使红色节点左倾。</li>
+<li>在有些情况下，需要递归调用Case1 Case2，来进行递归操作。如下：</li>
+</ol>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270025227969982.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/55594569-CC79-4864-9EAA-DAAED78D26E5.png" height="244" width="592"/></a></p>
+<h2>代码实现</h2>
+<p>经过上面的平衡化讨论，现在就来实现插入操作，一般地插入操作就是先执行标准的二叉查找树插入，然后再进行平衡化。对照2-3树，我们可以通过前面讨论的，左旋，右旋，FlipColor这三种操作来完成平衡化。</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270025256719737.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/B8DCD8D3-2456-466D-ADB6-7C1D82D5AA9B.png" height="378" width="468"/></a></p>
+<p>具体操作方式如下：</p>
+<ul>
+<li>如果节点的右子节点为红色，且左子节点位黑色，则进行左旋操作</li>
+<li>如果节点的左子节点为红色，并且左子节点的左子节点也为红色，则进行右旋操作</li>
+<li>如果节点的左右子节点均为红色，则执行FlipColor操作，提升中间结点。</li>
+</ul>
+<p>根据这一逻辑，我们就可以实现插入的Put方法了。</p>
+<pre>
+<span style="color: blue;">public override void </span>Put(TKey key, TValue value)
+{
+    root = Put(root, key, value);
+    root.Color = BLACK;
+}
+
+<span style="color: blue;">private </span><span style="color: #2b91af;">Node </span>Put(<span style="color: #2b91af;">Node </span>h, TKey key, TValue value)
+{
+    <span style="color: blue;">if </span>(h == <span style="color: blue;">null</span>) <span style="color: blue;">return new </span><span style="color: #2b91af;">Node</span>(key, value, 1, RED);
+    <span style="color: blue;">int </span>cmp = key.CompareTo(h.Key);
+    <span style="color: blue;">if </span>(cmp &lt; 0) h.Left = Put(h.Left, key, value);
+    <span style="color: blue;">else if </span>(cmp &gt; 0) h.Right = Put(h.Right, key, value);
+    <span style="color: blue;">else </span>h.Value = value;
+
+    <span style="color: green;">//平衡化操作
+    </span><span style="color: blue;">if </span>(IsRed(h.Right) &amp;&amp; !IsRed(h.Left)) h = RotateLeft(h);
+    <span style="color: blue;">if </span>(IsRed(h.Right) &amp;&amp; IsRed(h.Left.Left)) h = RotateRight(h);
+    <span style="color: blue;">if </span>(IsRed(h.Left) &amp;&amp; IsRed(h.Right)) h = FlipColor(h);
+
+    h.Number = Size(h.Left) + Size(h.Right) + 1;
+    <span style="color: blue;">return </span>h;
+}
+
+<span style="color: blue;">private int </span>Size(<span style="color: #2b91af;">Node </span>node)
+{
+    <span style="color: blue;">if </span>(node == <span style="color: blue;">null</span>) <span style="color: blue;">return </span>0;
+    <span style="color: blue;">return </span>node.Number;
+}
+</pre>
+<h2>分析</h2>
+<p>对红黑树的分析其实就是对2-3查找树的分析，红黑树能够保证符号表的所有操作即使在最坏的情况下都能保证对数的时间复杂度，也就是树的高度。</p>
+<p>在分析之前，为了更加直观，下面是以升序，降序和随机构建一颗红黑树的动画：</p>
+<ul>
+<li>以升序插入构建红黑树：</li>
+</ul>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270025386403742.gif"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/23ABDF45-2FCF-40EE-8BC7-C4312BBA989A.gif" height="310" width="595"/></a></p>
+<ul>
+<li>以降序插入构建红黑树：</li>
+</ul>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270026201865583.gif"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/B5ACC9B8-5CA6-45C2-B1D3-1E671B06C4AD.gif" height="369" width="588"/></a></p>
+<ul>
+<li>随机插入构建红黑树</li>
+</ul>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270027029521251.gif"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/706467EA-BE48-470C-B013-DC223C2FAFE0.gif" height="311" width="590"/></a></p>
+<p>从上面三张动画效果中，可以很直观的看出，红黑树在各种情况下都能维护良好的平衡性，从而能够保证最差情况下的查找，插入效率。</p>
+<p>下面来详细分析下红黑树的效率：</p>
+<h2>1. 在最坏的情况下，红黑树的高度不超过2lgN</h2>
+<p>最坏的情况就是，红黑树中除了最左侧路径全部是由3-node节点组成，即<strong>红黑相间的路径长度是全黑路径长度的</strong><strong>2</strong><strong>倍</strong>。</p>
+<p>下图是一个典型的红黑树，从中可以看到最长的路径(红黑相间的路径)是最短路径的2倍：</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270027354528654.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/FB585B7D-AC65-4180-BD7D-CAA27A8B296B.png" height="230" width="586"/></a></p>
+<h2>2. 红黑树的平均高度大约为lgN</h2>
+<p>下图是红黑树在各种情况下的时间复杂度，可以看出红黑树是2-3查找树的一种实现，他能保证最坏情况下仍然具有对数的时间复杂度。</p>
+<p>下图是红黑树各种操作的时间复杂度。</p>
+<p><a href="http://images.cnitblog.com/blog/94031/201403/270027378905711.png"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/E18FFF7F-8183-40EF-97C7-18EFB92653DF.png" height="301" width="582"/></a></p>
+<h1>应用</h1>
+<p>红黑树这种数据结构应用十分广泛，在多种编程语言中被用作符号表的实现，如：</p>
+<ul>
+<li>Java中的java.util.TreeMap,java.util.TreeSet</li>
+<li>C++ STL中的：map,multimap,multiset</li>
+<li>.NET中的：<a href="http://msdn.microsoft.com/zh-cn/library/f7fta44c%28v=vs.110%29.aspx">SortedDictionary</a>,<a target="_blank" href="http://msdn.microsoft.com/zh-cn/library/dd412070%28v=vs.110%29.aspx">SortedSet</a> 等</li>
+</ul>
+<p>下面以.NET中为例，通过Reflector工具，我们可以看到SortedDictionary的Add方法如下：</p>
+<pre>
+<span style="color: blue;">public void </span>Add(T item)
+{
+    <span style="color: blue;">if </span>(<span style="color: blue;">this</span>.root == <span style="color: blue;">null</span>)
+    {
+        <span style="color: blue;">this</span>.root = <span style="color: blue;">new </span>Node&lt;T&gt;(item, <span style="color: blue;">false</span>);
+        <span style="color: blue;">this</span>.count = 1;
+    }
+    <span style="color: blue;">else
+    </span>{
+        Node&lt;T&gt; root = <span style="color: blue;">this</span>.root;
+        Node&lt;T&gt; node = <span style="color: blue;">null</span>;
+        Node&lt;T&gt; grandParent = <span style="color: blue;">null</span>;
+        Node&lt;T&gt; greatGrandParent = <span style="color: blue;">null</span>;
+        <span style="color: blue;">int </span>num = 0;
+        <span style="color: blue;">while </span>(root != <span style="color: blue;">null</span>)
+        {
+            num = <span style="color: blue;">this</span>.comparer.Compare(item, root.Item);
+            <span style="color: blue;">if </span>(num == 0)
+            {
+                <span style="color: blue;">this</span>.root.IsRed = <span style="color: blue;">false</span>;
+                ThrowHelper.ThrowArgumentException(ExceptionResource.Argument_AddingDuplicate);
+            }
+            <span style="color: blue;">if </span>(TreeSet&lt;T&gt;.Is4Node(root))
+            {
+                TreeSet&lt;T&gt;.Split4Node(root);
+                <span style="color: blue;">if </span>(TreeSet&lt;T&gt;.IsRed(node))
+                {
+                    <span style="color: blue;">this</span>.InsertionBalance(root, <span style="color: blue;">ref </span>node, grandParent, greatGrandParent);
+                }
+            }
+            greatGrandParent = grandParent;
+            grandParent = node;
+            node = root;
+            root = (num &lt; 0) ? root.Left : root.Right;
+        }
+        Node&lt;T&gt; current = <span style="color: blue;">new </span>Node&lt;T&gt;(item);
+        <span style="color: blue;">if </span>(num &gt; 0)
+        {
+            node.Right = current;
+        }
+        <span style="color: blue;">else
+        </span>{
+            node.Left = current;
+        }
+        <span style="color: blue;">if </span>(node.IsRed)
+        {
+            <span style="color: blue;">this</span>.InsertionBalance(current, <span style="color: blue;">ref </span>node, grandParent, greatGrandParent);
+        }
+        <span style="color: blue;">this</span>.root.IsRed = <span style="color: blue;">false</span>;
+        <span style="color: blue;">this</span>.count++;
+        <span style="color: blue;">this</span>.version++;
+    }
+}
+</pre>
+<p>可以看到，内部实现也是一个红黑树，其操作方法和本文将的大同小异，感兴趣的话，您可以使用Reflector工具跟进去查看源代码。</p>
+<h1> 总结</h1>
+<p><a target="_blank" href="http://www.cnblogs.com/yangecnu/p/Introduce-2-3-Search-Tree.html">前文</a>讲解了自平衡查找树中的<a target="_blank" href="http://www.cnblogs.com/yangecnu/p/Introduce-2-3-Search-Tree.html">2-3查找树</a>， 这种数据结构在插入之后能够进行自平衡操作，从而保证了树的高度在一定的范围内进而能够保证最坏情况下的时间复杂度。但是2-3查找树实现起来比较困难， 红黑树是2-3树的一种简单高效的实现，他巧妙地使用颜色标记来替代2-3树中比较难处理的3-node节点问题。红黑树是一种比较高效的平衡查找树，应 用非常广泛，很多编程语言的内部实现都或多或少的采用了红黑树。</p>
+<p>希望本文对您了解红黑树有所帮助，下文将介绍在文件系统以及数据库系统中应用非常广泛的另外一种平衡树结构：B树。</p>
+</div>
+<div style="">
+<div>作者： <a target="_blank" href="http://www.cnblogs.com/yangecnu/">yangecnu</a>（<a target="_blank" href="http://www.cnblogs.com/yangecnu/">yangecnu's Blog on 博客园</a>）<br/>
+出处：<a target="_blank" href="http://www.cnblogs.com/yangecnu/">http://www.cnblogs.com/yangecnu/</a><br/>
+本作品由<a target="_blank" rel="cc:attributionURL" href="http://www.cnblogs.com/yangecnu/">yangecnu</a> 创作，采用<a target="_blank" rel="license" href="http://creativecommons.org/licenses/by-nc-nd/2.5/cn/">知识共享署名-非商业性使用-禁止演绎 2.5 中国大陆许可协议</a>进行许可。 欢迎转载，但任何转载必须保留完整文章，在显要地方显示署名以及原文链接。如您有任何疑问或者授权方面的协商，请 <a target="_blank" href="http://space.cnblogs.com/msg/send/yangecnu">给我留言</a>。</div>
+</div>
+<div>
+<div>分类: <a target="_blank" href="http://www.cnblogs.com/yangecnu/category/548373.html">Data Structures &amp; Algorithms</a></div>
+<div>标签: <a href="http://www.cnblogs.com/yangecnu/tag/Red-Black%20Tree/">Red-Black Tree</a>, <a href="http://www.cnblogs.com/yangecnu/tag/%E7%BA%A2%E9%BB%91%E6%A0%91/">红黑树</a>, <a href="http://www.cnblogs.com/yangecnu/tag/%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91/">平衡查找树</a></div>
+<div>
+<div><a>好文要顶</a> <a>关注我</a> <a>收藏该文</a> <a title="分享至新浪微博"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/FAF79B0B-896A-4818-95C8-D9027A1BA40F.png" height="24" width="24"/></a> <a title="分享至微信"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/544650BB-3008-4644-8C12-2E07BD1DF8BB.png" height="48" width="48"/></a></div>
+<div>
+<div><a target="_blank" href="http://home.cnblogs.com/u/yangecnu/"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/EB751A63-BBEF-4448-B262-132BCC1B0ED3.jpg" height="48" width="48"/></a>
+<div><a href="http://home.cnblogs.com/u/yangecnu/">yangecnu</a><br/>
+<a href="http://home.cnblogs.com/u/yangecnu/followees">关注 - 36</a><br/>
+<a href="http://home.cnblogs.com/u/yangecnu/followers">粉丝 - 2072</a></div>
+</div>
+<div>荣誉：<a target="_blank" href="http://www.cnblogs.com/expert/">推荐博客</a></div>
+<div><a>+加关注</a></div>
+</div>
+<div>
+<div>28</div>
+<div>0</div>
+</div>
+</div>
+<div><a href="http://www.cnblogs.com/yangecnu/p/Introduce-2-3-Search-Tree.html">«</a> 上一篇：<a title="发布于2014-03-25 22:49" href="http://www.cnblogs.com/yangecnu/p/Introduce-2-3-Search-Tree.html">浅谈算法和数据结构: 八 平衡查找树之2-3树</a><br/>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-B-Tree-and-B-Plus-Tree.html">»</a> 下一篇：<a title="发布于2014-03-29 00:51" href="http://www.cnblogs.com/yangecnu/p/Introduce-B-Tree-and-B-Plus-Tree.html">浅谈算法和数据结构: 十 平衡查找树之B树</a><br/></div>
+</div>
+</div>
+<div>posted @ 2014-03-27 00:28 <a href="http://www.cnblogs.com/yangecnu/">yangecnu</a> 阅读(27324) 评论(16) <a rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?postid=3627386">编辑</a> <a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#">收藏</a></div>
+</div>
+</div>
+</div>
+<a name="!comments"/>
+<div>
+<div>评论列表</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#2904860">#1楼</a><a name="2904860"/> 2014-03-27 08:50 <a target="_blank" href="http://www.cnblogs.com/Losers-AFC/">xinglu31</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/xinglu31"> </a></div>
+<div>
+<div>动图都是怎么做的？很用心呢</div>
+<div><a>支持(3)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#2904861">#2楼</a><a name="2904861"/> 2014-03-27 08:51 <a target="_blank" href="http://www.cnblogs.com/kaituorensheng/">jihite</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/jihite"> </a></div>
+<div>
+<div>强</div>
+<div><a>支持(0)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#2905005">#3楼</a><a name="2905005"/> 2014-03-27 09:54 <a target="_blank" href="http://www.cnblogs.com/heyuquan/">滴答的雨</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/%E6%BB%B4%E7%AD%94%E7%9A%84%E9%9B%A8"> </a></div>
+<div>
+<div>mark</div>
+<div><a>支持(0)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#2956218">#4楼</a><a name="2956218"/> 2014-06-02 20:01 <a target="_blank" href="http://www.cnblogs.com/wuyudong/">wuyudong</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/wuyudong"> </a></div>
+<div>
+<div>很详细</div>
+<div><a>支持(0)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3090387">#5楼</a><a name="3090387"/> 2014-12-20 13:19 <a target="_blank" href="http://home.cnblogs.com/u/705615/">Boyface</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/Boyface"> </a></div>
+<div>
+<div>写的很不错，尤其是动画，很容易帮人理解，多谢分享~~~<br/>
+<br/>
+有个错误更正下，平衡化操作第二条<br/>
+if (IsRed(h.Right) &amp;&amp; IsRed(h.Left.Left)) h = RotateRight(h);<br/>
+应该是<br/>
+if (IsRed(h.Left) &amp;&amp; IsRed(h.Left.Left)) h = RotateRight(h);</div>
+<div><a>支持(5)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3245693">#6楼</a><a name="3245693"/> 2015-08-11 17:21 <a target="_blank" href="http://www.cnblogs.com/jiangtianyu/">martuis</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/martuis"> </a></div>
+<div>
+<div>请问删除呢？</div>
+<div><a>支持(2)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3271596">#7楼</a><a name="3271596"/> 2015-09-22 11:29 <a target="_blank" href="http://www.cnblogs.com/fangwencai/">方文才</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/%E6%96%B9%E6%96%87%E6%89%8D"> </a></div>
+<div>
+<div>非常棒的博文</div>
+<div><a>支持(0)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3318273">#8楼</a><a name="3318273"/> 2015-12-01 14:52 <a target="_blank" href="http://www.cnblogs.com/sdlwlxf/">sdlwlxf</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/sdlwlxf"> </a></div>
+<div>
+<div>非常好，可惜没有删除操作</div>
+<div><a>支持(0)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3367598">#9楼</a><a name="3367598"/> 2016-02-27 00:05 <a target="_blank" href="http://www.cnblogs.com/peaceWang/">一夜星辰</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/%E4%B8%80%E5%A4%9C%E6%98%9F%E8%BE%B0"> </a></div>
+<div>
+<div>楼主，删除的部分该怎么做呢？</div>
+<div><a>支持(2)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3378029">#10楼</a><a name="3378029"/> 2016-03-11 14:56 <a target="_blank" href="http://home.cnblogs.com/u/138576/">janjan</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/janjan"> </a></div>
+<div>
+<div>给动图点个赞，一目了然，清晰直观，看的出楼主非常用心，花费了不少时间和精力，辛苦了。</div>
+<div><a>支持(0)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3420528">#11楼</a><a name="3420528"/> 2016-04-30 10:31 <a target="_blank" href="http://www.cnblogs.com/virusolf/">贺大卫</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/%E8%B4%BA%E5%A4%A7%E5%8D%AB"> </a></div>
+<div>
+<div>兄台，几点疑问：<br/>
+根据红黑树定义，红色链接都是左倾的，<br/>
+1)旋转时，左旋时，开始E.right不可能为红色啊<br/>
+2)旋转时，右旋时，旋转结束，E.right不可能为红色啊<br/>
+3)颜色反转，什么时候会出现左右都是红色呢</div>
+<div><a>支持(0)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3440946">#12楼</a><a name="3440946"/> 2016-05-28 12:33 <a target="_blank" href="http://www.cnblogs.com/freeopen/">Free_Open</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/Free_Open"> </a></div>
+<div>
+<div>棒，转载下哈</div>
+<div><a>支持(0)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3445892">#13楼</a><a name="3445892"/> 2016-06-04 16:40 <a target="_blank" href="http://www.cnblogs.com/yanlixin1993/">闫立新</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/%E9%97%AB%E7%AB%8B%E6%96%B0"> </a></div>
+<div>
+<div><a title="查看所回复的评论" href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3378029">@</a> janjan<br/>
+<a target="_blank" href="http://algs4.cs.princeton.edu/33balanced/">http://algs4.cs.princeton.edu/33balanced/</a> 这是原文</div>
+<div><a>支持(1)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3453854">#14楼</a><a name="3453854"/> 2016-06-17 09:44 <a target="_blank" href="http://www.cnblogs.com/Amin000/">Amin000</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/Amin000"> </a></div>
+<div>
+<div>红黑树应该没有限制两个儿子节点都是红色的吧。</div>
+<div><a>支持(1)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3590072">#15楼</a><a name="3590072"/> 2016-12-27 02:21 <a target="_blank" href="http://home.cnblogs.com/u/1086896/">五号智能</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/%E4%BA%94%E5%8F%B7%E6%99%BA%E8%83%BD"> </a></div>
+<div>
+<div>有几点疑问:<br/>
+(一)这颗树.每次插入右孩子都会导致树的调整.AVL树调整频率也没这么高吧?<br/>
+(二)在定义中的那个树图. 如果反复删插L结点.那么.这棵树每次删插都会做大量的无用的旋转.AVL树也不会这样吧?<br/>
+<br/>
+经以上两点疑问.怀疑这个实现红黑树的方法.平衡的效率可能接近AVL树.<br/>
+唯一的优点可能就是实现的代码是非常 的简单了.而且毕竟 是平衡二叉查找树.搜索的效率还非常高的.只不过动态平衡性能不太好.</div>
+<div><a>支持(0)</a><a>反对(0)</a></div>
+</div>
+</div>
+<div>
+<div>
+<div>  </div>
+<a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#3611972">#16楼</a><a name="3611972"/> 2017-02-05 13:48 <a target="_blank" href="http://home.cnblogs.com/u/805623/">远方_张涛</a> <a title="发送站内短消息" href="http://msg.cnblogs.com/send/%E8%BF%9C%E6%96%B9_%E5%BC%A0%E6%B6%9B"> </a></div>
+<div>
+<div>赞赞赞，看了楼主的2-3树，再来了解红黑树好理解多了，并且各种动态模型和示例表述的非常形象,真的是多谢博主.</div>
+<div><a>支持(1)</a><a>反对(0)</a></div>
+</div>
+</div>
+</div>
+<div><a name="commentform"/>
+<div><a>刷新评论</a><a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#">刷新页面</a><a href="http://www.cnblogs.com/yangecnu/p/Introduce-Red-Black-Tree.html#top">返回顶部</a></div>
+<div>
+<div>注册用户登录后才能发表评论，请 <a rel="nofollow">登录</a> 或 <a rel="nofollow">注册</a>，<a href="http://www.cnblogs.com">访问</a>网站首页。</div>
+</div>
+<div><a target="_blank" href="http://www.ucancode.com/index.htm">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br/>
+<a target="_blank" href="http://cloud.qy.com.cn/68?a=cnblog">【推荐】群英云服务器性价王，2核4G5M BGP带宽 68元首月！</a><br/>
+<a target="_blank" href="https://group.cnblogs.com/topic/76725.html">【福利】阿里云免费套餐升级，更多产品，更久时长</a><br/></div>
+<div><a target="_blank" href="http://wijmo.gcpowertools.com.cn/angular2/?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=wijmo&amp;utm_campaign=community"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/31FCC686-EBD3-4186-9FF5-03F6C7E7BBA6.gif" height="250" width="300"/></a></div>
+<div>
+<div><b>最新IT新闻</b>:<br/>
+· <a target="_blank" href="http://news.cnblogs.com/n/568280/">起底亚马逊商业帝国：电商、云计算、人工智能样样给力</a><br/>
+· <a target="_blank" href="http://news.cnblogs.com/n/568311/">F-Droid将迎来UI大更新</a><br/>
+· <a target="_blank" href="http://news.cnblogs.com/n/568317/">厉害了！Adobe新技术可将全景视频变成6自由度视频</a><br/>
+· <a target="_blank" href="http://news.cnblogs.com/n/568305/">当心僵尸：过时Linux内核的安全风险</a><br/>
+· <a target="_blank" href="http://news.cnblogs.com/n/568313/">在图片中加入噪点就能骗过Google最顶尖的图像识别AI</a><br/>
+» <a target="_blank" href="http://news.cnblogs.com/" title="IT新闻">更多新闻...</a></div>
+</div>
+<div><a target="_blank" href="http://click.aliyun.com/m/15483/"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/6773DF67-4E3F-4A94-86F5-A8528557D886.jpg" height="120" width="936"/></a></div>
+<div>
+<div><b>最新知识库文章</b>:<br/>
+<div>· <a target="_blank" href="http://kb.cnblogs.com/page/565901/">唱吧DevOps的落地，微服务CI/CD的范本技术解读</a><br/>
+· <a target="_blank" href="http://kb.cnblogs.com/page/566523/">程序员，如何从平庸走向理想？</a><br/>
+· <a target="_blank" href="http://kb.cnblogs.com/page/566318/">我为什么鼓励工程师写blog</a><br/>
+· <a target="_blank" href="http://kb.cnblogs.com/page/566528/">怎么轻松学习JavaScript</a><br/>
+· <a target="_blank" href="http://kb.cnblogs.com/page/509431/">如何打好前端游击战</a><br/></div>
+» <a target="_blank" href="http://kb.cnblogs.com/">更多知识库文章...</a></div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<div>
+<div>
+<h3>公告</h3>
+<div>
+<div>访问统计:</div>
+<a target="_blank" href="http://www.statcounter.com"><img src="%E6%B5%85%E8%B0%88%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%3A%20%E4%B9%9D%20%E5%B9%B3%E8%A1%A1%E6%9F%A5%E6%89%BE%E6%A0%91%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91(%E5%8A%A8%E7%94%BB).resources/0CFD686F-3ADD-4B0E-8FE3-9B0F25BA8916.png" height="14" width="60"/></a>
+<div>昵称：<a href="http://home.cnblogs.com/u/yangecnu/">yangecnu</a><br/>
+园龄：<a title="入园时间：2009-10-19" href="http://home.cnblogs.com/u/yangecnu/">7年6个月</a><br/>
+荣誉：<a href="http://www.cnblogs.com/expert/">推荐博客</a><br/>
+粉丝：<a href="http://home.cnblogs.com/u/yangecnu/followers/">2072</a><br/>
+关注：<a href="http://home.cnblogs.com/u/yangecnu/followees/">36</a>
+<div><a>+加关注</a></div>
+</div>
+</div>
+</div>
+<div>
+<div style="">
+<table cellspacing="0" title="日历" cellpadding="0">
+<tbody>
+<tr>
+<td colspan="7">
+<table cellspacing="0">
+<tbody>
+<tr>
+<td><a>&lt;</a></td>
+<td align="center">2017年4月</td>
+<td align="right"><a>&gt;</a></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<th align="center" abbr="日">日</th>
+<th align="center" abbr="一">一</th>
+<th align="center" abbr="二">二</th>
+<th align="center" abbr="三">三</th>
+<th align="center" abbr="四">四</th>
+<th align="center" abbr="五">五</th>
+<th align="center" abbr="六">六</th>
+</tr>
+<tr>
+<td align="center">26</td>
+<td align="center">27</td>
+<td align="center">28</td>
+<td align="center">29</td>
+<td align="center">30</td>
+<td align="center">31</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">3</td>
+<td align="center">4</td>
+<td align="center">5</td>
+<td align="center">6</td>
+<td align="center">7</td>
+<td align="center">8</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="center">10</td>
+<td align="center">11</td>
+<td align="center">12</td>
+<td align="center">13</td>
+<td align="center">14</td>
+<td align="center">15</td>
+</tr>
+<tr>
+<td align="center">16</td>
+<td align="center">17</td>
+<td align="center">18</td>
+<td align="center">19</td>
+<td align="center">20</td>
+<td align="center">21</td>
+<td align="center">22</td>
+</tr>
+<tr>
+<td align="center">23</td>
+<td align="center">24</td>
+<td align="center">25</td>
+<td align="center">26</td>
+<td align="center">27</td>
+<td align="center">28</td>
+<td align="center">29</td>
+</tr>
+<tr>
+<td align="center">30</td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">3</td>
+<td align="center">4</td>
+<td align="center">5</td>
+<td align="center">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<div>
+<div>
+<div>
+<h3>随笔分类</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/yangecnu/category/548373.html">Data Structures &amp; Algorithms(12)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/category/575434.html">Database(5)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/category/573475.html">Design Patterns(8)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/category/416399.html">DotNet Framework(26)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/category/499866.html">Excel Development(11)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/category/373950.html">Kinect for Windows SDK(29)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/category/373951.html">Reactive Extensions(7)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/category/825912.html">Some Reading Books(1)</a></li>
+</ul>
+</div>
+<div>
+<h3>随笔档案</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2016/05.html">2016年5月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2015/11.html">2015年11月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2015/05.html">2015年5月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2015/04.html">2015年4月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2015/03.html">2015年3月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2015/02.html">2015年2月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2015/01.html">2015年1月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/12.html">2014年12月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/11.html">2014年11月 (3)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/10.html">2014年10月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/09.html">2014年9月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/08.html">2014年8月 (3)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/07.html">2014年7月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/06.html">2014年6月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/05.html">2014年5月 (7)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/04.html">2014年4月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/03.html">2014年3月 (6)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/02.html">2014年2月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2014/01.html">2014年1月 (6)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/12.html">2013年12月 (3)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/11.html">2013年11月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/10.html">2013年10月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/09.html">2013年9月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/08.html">2013年8月 (4)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/07.html">2013年7月 (4)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/06.html">2013年6月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/05.html">2013年5月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/04.html">2013年4月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/03.html">2013年3月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/02.html">2013年2月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/01.html">2013年1月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/12.html">2012年12月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/11.html">2012年11月 (3)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/10.html">2012年10月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/09.html">2012年9月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/08.html">2012年8月 (1)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/07.html">2012年7月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/06.html">2012年6月 (2)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/05.html">2012年5月 (7)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/04.html">2012年4月 (11)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/03.html">2012年3月 (4)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2011/07.html">2011年7月 (3)</a></li>
+</ul>
+</div>
+</div>
+<div>
+<div>
+<h3>积分与排名</h3>
+<ul>
+<li>积分 - 315140</li>
+<li>排名 - 454</li>
+</ul>
+</div>
+</div>
+<div>
+<div>
+<div>
+<h3>阅读排行榜</h3>
+<div>
+<ul>
+<li><a href="http://www.cnblogs.com/yangecnu/p/Introduce-Dependency-Injection.html">1. 浅谈依赖注入(58306)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/03/30/KinectSDK_Geting_Started.html">2. [译]Kinect for Windows SDK开发入门(一)：开发环境配置(54671)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/p/Excel-Develpment-Introduction.html">3. 浅谈Excel开发：一 Excel 开发概述(35478)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2012/03/31/KinectSDK_Application_Fundamentals_Part1.html">4. [译]Kinect for Windows SDK开发入门(二)：基础知识 上(34389)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/p/Introduction-CQRS.html">5. 浅谈命令查询职责分离(CQRS)模式(33407)</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div>
+<div>
+<div>
+<h3>推荐排行榜</h3>
+<div>
+<ul>
+<li><a href="http://www.cnblogs.com/yangecnu/p/The-evolution-of-argument-validation-in-DotNet.html">1. C# 中参数验证方式的演变(118)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/p/Introduce-RabbitMQ.html">2. .NET 环境中使用RabbitMQ(82)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/archive/2013/03/10/Reduce_the_DotNET_Applications_Memory_Usage.html">3. 减少.NET应用程序内存占用的一则实践(75)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/p/Something-about-Concurrent-and-Parallel-Programming.html">4. 浅谈并发与并行(一)(72)</a></li>
+<li><a href="http://www.cnblogs.com/yangecnu/p/Introduce-Dependency-Injection.html">5. 浅谈依赖注入(69)</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>Copyright ©2017 yangecnu</div>
+</div>
+</body></html>

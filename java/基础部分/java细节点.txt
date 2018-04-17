@@ -1,0 +1,50 @@
+作用域         当前类          同一package           子孙类                其他package 
+public          √                 √                  √                      √ 
+protected       √                 √                  √                      × 
+friendly        √                 √                  ×                      × 
+private         √                 ×                  ×                      ×
+
+--------
+ 基本数据类型（或叫做原生类、内置类型）8种：
+                           整数：byte，short，int，long（默认是int类型）
+                           浮点类型： float，double（默认是double类型）
+                           字符类型：char
+                           布尔类型：boolean
+  引用数据类型3种：数组，类，接口
+其中，基本数据类型之间除了boolean，其他数据类型之间可以任意的相互转换（强制转化或默认转换），这个与c++中有点区别。
+java中定义数组有两种方式，一种是int[ ] number，一种是int  number[ ]，推荐第一种，可读性更高。
+Java中的那些基本类型属于原生类，而数组是引用类型，不属于原生类，可以看成是一种对象。
+
+行为：
+基本类型只是一个值，没有任何行为
+对象类型有自己的行为
+
+内存分配：
+基本类型在栈内分配
+对象在堆内分配
+对象引用保存在栈内
+
+引用与值：
+基本类型是值类型，仅表示一个值，保存在栈内
+引用类型分两部分，对象引用保存在栈内，对象保存在堆内，
+访问变量，是使用的引用找对象
+
+
+------------------------------------------------
+Java的关键字对Java的编译器有特殊的意义，他们用来表示一种数据类型，或者表示程序的结构等，关键字不能用作变量名、方法名、类名、包名和参数。
+
+true false 是boolean的变量值，是编译器赋予特定含义的，但并不是关键字
+
+1，Java 关键字列表 (依字母排序 共50组)：
+abstract, assert, boolean, break, byte, case, catch, char, class, const（保留关键字）, continue, default, do, double, else, enum, extends, final, finally, float, for, goto（保留关键字）, if, implements, import, instanceof, int, interface, long, native, new, package, private, protected, public, return, short, static, strictfp, super, switch, synchronized, this, throw, throws, transient, try, void, volatile, while
+
+2，保留字列表 (依字母排序 共14组)，Java保留字是指现有Java版本尚未使用，但以后版本可能会作为关键字使用：
+byValue, cast, false, future, generic, inner, operator, outer, rest, true, var, goto （保留关键字） , const （保留关键字） , null
+-------
+Java.awt.*只能导入awt这个包中的所有类，awt中的包中的类不会导入
+
+
+
+
+
+

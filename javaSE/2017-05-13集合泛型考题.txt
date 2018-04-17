@@ -1,0 +1,15 @@
+集合与泛型阶段测试（120分卷）
+1.(5分)你可以将List<String>传递给一个接收List<Object>参数的函数吗？如何改代码做到呢？
+2.(5分)Array可以使用泛型吗？
+3.(5分)Java泛型定义，泛型的好处是什么？
+4.(5分)List<? extends T> 和List<? super T>区别
+5.(5分)什么是泛型函数？
+6.(5分)什么是泛型构造器？
+
+7.(10分)画出集合框架图
+8.(10分)详述ArrayList和LinkedList的区别？
+9.(10分)Iterator和ListIterator的区别
+10.(10分)HashSet和TreeSet有什么区别 ？
+11.(10分)Java的HashMap是如何工作的？
+12.(10分)向TreeMap中添加对象的代码举例。
+13.(30分)用源代码实现HashMap<K,V>(增、删、改、查询、遍历功能)。

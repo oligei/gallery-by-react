@@ -1,0 +1,10 @@
+链接：https://www.nowcoder.com/questionTerminal/ef489f8202a84b42806852aacc472867
+来源：牛客网
+
+synchronized?: 用来给对象和方法或者代码块添加互斥锁，当它锁定一个方法或者一个代码块的时候，同一时刻最多只有一个线程执行这个段代码，会使线程发生阻塞。synchronized实现多线程同步支持原子性、有序性和可见性。
+volatile：当把变量声明为volatile类型后，不会执行加锁操作，也不会使执行线程阻塞，因此volatile变量是一种比?synchronized关键字更轻量级的同步机制。vloatile实现多线程同步不支持原子性，只支持可见性和有序性。
+Volatile和Synchronized四个不同点：? 
+1 粒度不同，前者锁对象和类，后者针对变量? 
+2 syn阻塞，volatile线程不阻塞? 
+3 syn保证三大特性，volatile不保证原子性? 
+4 syn编译器优化，volatile不优化 (即代码不可重新排序)

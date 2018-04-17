@@ -1,0 +1,323 @@
+				Java基础考题（120分卷）
+0.（5分）byte,short,short,int混合运算规则。
+	byte,short,char之间不会相互转换，三者在计算时首先转换为int类型数值，然后再进行计算
+
+1.（5分）127的补码，-127的补码	
+	（1）127的补码： 0,111 1111
+    （2）-127的补码: 1,000 0001
+
+2.（5分）中括号，圆括号，点运算符优先级排序。
+         点运算>中括号>圆括号
+
+3.（5分）说明final在java中的作用
+	 （1）声明常量，只能给予一次赋值
+	 （2）修饰成员方法，表示该方法不能被子类重写
+	 （3）修饰类时，表示该类不能被继承
+
+4.(5分)单例模式举例并说明主要用途。
+       （1）示例
+        class Single{
+ 		private static Single onlyone = new Single();//私有的实例对象
+ 		private String name;
+		public static Single getSingle() {   //getSingle()为static，不用创建对象     
+ 			return onlyone; 
+ 		}
+ 		private Single() {}     //私有构造方法使其不能在类的外部创建该类的对象
+		}
+       （2）用途：在整个软件结构中只建立某类的一个对象且是该类中私有成员，防止类外额外创建该类对象，常用于工具类
+
+5.（5分）动态初始化一个三维数组，遍历拷贝至另一个三维数组中
+	public void testE(){
+		System.out.println("----a[][][]------");
+		int a[][][]=new int[2][2][];
+		a[0][0] = new int[2];
+		a[0][1] = new int[2];
+		a[1][0] = new int[2];
+		a[1][1] = new int[2];
+		for (int i = 0; i < a.length; i++) {
+			for (int j = 0; j < a[i].length; j++) {
+				for (int k = 0; k < a[j].length; k++) {
+					a[i][j][k]=k;
+					System.out.print(a[i][j][k] +" ");
+				}
+				System.out.println();
+			}
+		}
+		System.out.println("----b[][][]------");//拷贝操作，将a[2][2][2]拷贝到b[2][2][2]中
+		int b[][][] = new int[2][2][2];
+		for (int i = 0; i < b.length; i++) {
+			for (int j = 0; j < b[i].length; j++) {
+				for (int k = 0; k < b[j].length; k++) {
+					b[i][j][k]=a[i][j][k];
+					System.out.print(b[i][j][k]+" ");
+				}
+				System.out.println();
+			}
+		}
+	}
+
+6．（5分）静态绑定定义并用程序举例
+	（1）定义：
+	（2）示例：
+
+7.（5分）动态绑定定义并用程序举例
+	（1）定义：
+	（2）示例：
+
+8. （10分）有5个人坐在一起，问第五个人多少岁？
+	他说比第4个人大2岁。问第4个人岁数，
+	他说比第3个人大2岁。问第三个人，又说比第2人大两岁。
+	问第2个人，说比第一
+	个人大两岁。最后问第一个人，他说是10岁。请问第五个人多大？ （用递归实现）
+public class Person {
+	
+   static int getAge(int age,int amount){
+    	if(amount>0){
+    		amount--;
+    		age+=2;
+    		age = getAge(age, amount);
+    		}
+    	return age;
+    }
+    public static void main(String args[]){
+    System.out.println(getAge(10, 5-1));//结果为：18
+		
+	}
+  }
+9.(10分)自已封装一个数组类，可以根据用户传递的数据，动态的对数组的长度进行扩展；
+类名是:MyArray 
+方法有：
+   void add(int value);  //追加一个值
+   vold remove(int index);   //根据索引，删除一个值void add(int position,int value); //在指定位置插入一个数值
+   void set(int position,int value); //修改某个位置的数值
+   int get(int index); //根据索引，获得元数的值
+   int size();  //获得动态数组中元素的个数；
+        //动态数组扩展，类定义模块
+	public class MyArray{
+		private int arr[];
+		private int length;
+		private int cursor;//浮动下标,已经用了的数组元素个数
+		public MyArray() {
+			arr = new int[5];
+			length=arr.length;
+			cursor=0;
+		}
+		void add(int value){
+			//最难
+			if(cursor==length-1){//满了，增加空间
+				length+=5;
+				int newArr[]=new int[length];
+				for (int i = 0; i < length-5; i++) {
+					newArr[i]=arr[i];
+				}
+				arr=newArr;
+			}
+			arr[cursor]=value;	
+			cursor+=1;
+		}
+		void remove(int index){		
+			if(index<0 || index>=length){
+				System.out.println("index值不合法");
+				System.out.println("输入的下标取值范围是"+0+"~"+length);
+			}
+			else{
+				System.out.println("移除的值"+arr[index]);
+				for (int i = index; i < cursor; i++) {
+					arr[i]=arr[i+1];
+				}
+				cursor--;
+			}
+			
+		}
+		void set(int position,int value){
+			if(position<0 || position>=length){
+				System.out.println("postion值不合法");
+				System.out.println("输入的下标取值范围是"+0+"~"+length);
+			}
+			else{
+				arr[position]=value;
+			}
+		}
+		int get(int index){
+			int value = -1111111;
+			if(index<0 || index>=length){
+				System.out.println("index值不合法");
+				System.out.println("输入的下标取值范围是"+0+"~"+length);
+			}
+			else{
+				value=arr[index];
+			}
+			return value;
+		}
+		int size(){
+			return cursor;
+		}
+		void show(){
+			for (int i = 0; i < cursor; i++) {
+				System.out.print(arr[i]+ " ");
+			}
+			System.out.println();
+		}
+	}
+
+
+
+10.（10分）static的定义和用法的详细说明（课堂上举的例子—继承、块儿）
+    （1）static标记的变量或方法由整个类(所有实例)共享，如访问控制权限允许，可不必创建该类对象而直接用 类名加‘.’调用。
+    （2）修饰变量
+	     可以在非静态方法中访问
+    （3）修饰方法
+		 在static方法内部只能访问类的static属性，不能访问类的非static属性,因此static方法内部不能有非静态成员变量、this与super
+    （4）静态代码块
+            加载类时执行，在整个程序中只执行一次，常用于静态数据的初始化
+	public class Person {
+		private int id;
+		public static int total = 0;
+		public Person() {
+			total++;//(2)
+			id = total;
+		}
+		public static void main(String args[]){
+			Person Tom=new Person();
+			Person.total=100; //(1)
+			//System.out.println(id);(3)Cannot make a static reference to the non-static field id
+		}
+	}
+	
+11.(10分）写个java程序，要求如下
+	animal：接口 属性：眼睛 动作：see
+	public interface IAnimal {
+		public static final int eyes = 2;//
+		public void see();
+	}
+	monkey：抽象类 继承动物类 属性：聪明   动作：上树 
+	public abstract class AMonkey implements IAnimal{
+     String teZheng = "聪明";
+     public void action(){
+    	 System.out.println("动作为会爬上树");
+     }   		 
+	}
+	美猴王：继承并实现monkey 属性：金箍棒，动作：火眼金睛 
+	public class MonkeyKing extends AMonkey{
+    String other = "金箍棒";
+	public static void main(String[] args) {
+		AMonkey sunWuKOng = new MonkeyKing();
+		sunWuKOng.action();
+	}
+	@Override
+	public void see() {
+		System.out.println("看穿万物");
+	}
+	@Override
+	public void action(){
+   	 System.out.println("动作为火眼金睛 ");
+    }
+	}
+12.（10分）写个java例子，说明多态，以及upCast,downCast三个知识点。
+    （1）多态：继承问题中，子类对父类方法的重写、继承
+	                   子类对父类成员的继承
+                           子类对父类方法无法重写（final修饰方法）、无法继承（父类构造方法）
+	（2）upCas：子类对象赋值于父类对象
+	（3）downCast：父类对象强转赋值于子类对象
+	（4）示例：
+	//猴子
+	public abstract class AMonkey{
+     String teZheng = "聪明";
+     public void action(){
+    	 System.out.println("动作为会爬上树");
+     }   		 
+	}
+	//美猴王
+	public class MonkeyKing extends AMonkey{
+    String other = "金箍棒";
+	public static void main(String[] args) {
+		AMonkey sunWuKOng = new MonkeyKing();//sunWuKOng为上转型对象，过程为upCast
+		sunWuKOng.action();//这里实现多态，执行的是子类MonkeyKing的action()方法
+		MonkeyKing king = (MonkeyKing) sunWuKOng;//过程为downCast
+		king.action();
+	}
+	@Override
+	public void action(){
+   	 System.out.println("动作为火眼金睛 ");
+    }
+	}
+
+13.（10分）说明不同包private,default,protected,public权限，用程序举例并说明protected继承时，
+父类方法和子类方法在main中的调用问题。（main方法在子类中）
+	（1）private：仅在本类中可以访问
+	     default：在本类和本包中可以访问
+	     protected：在本类、本包和  不同包中有继承关系的子类中  可以访问
+	     public：在本类、本包和不同包中可以访问
+	（2）示例：
+	package com.huang;
+	public class Person{
+		protected int a  = 1;
+		public void show() {   
+			System.out.println(a);   
+		}
+
+	package com.ming;
+	class SonA extends Person{
+		 public void show() {
+			 System.out.println(a);
+		 }
+		 public static void main(String[] args) {
+			Son1 son = new Son1();
+			son.show();
+			Person p = new Person();
+			p.show();
+		}
+	}
+14.（10分）举例说明聚合、组合、依赖、关联（每个用三个例子）
+	（1）聚合：不会水的人有一天下水救人；不会开车的人突然开了一次车，有一个印度人突然间用筷子吃饭
+	（2）组合：小船得有船桨；学生一般都有笔；车子得有轮子
+	（3）依赖：一个班有教师和学生；一个连有连长、班长、排长、士兵；笔的类型有铅笔、钢笔、圆珠笔
+	（4）关联：人和眼睛；猴子和自身的大脑，猫和自己的鼻子
+15.（10分）在不同包中继承父类中的内部类程序举例。
+package com.huang;
+public class ChengYuan {//外部类非静态
+	int leg = 4;
+	static int eyes = 7;
+	public ChengYuan(){
+		System.out.println("mking out class");
+	}
+	void showOut(){//访问内部类成员
+		System.out.println(Inner.Ieyes);
+		System.out.println(new Inner().Ileg);
+		//System.out.println();
+	}
+	public class Inner{//依赖于外部类成员
+		protected int Ileg=2;
+		public static final int Ieyes = 3;
+		//static int II = 4;成员内部类不能直接定义静态成员
+		public Inner() {
+			System.out.println("making inner class");
+		}
+		public void showIn(){//访问外部类成员
+			System.out.println(eyes);
+			System.out.println(ChengYuan.eyes);
+			System.out.println(ChengYuan.this.leg);
+			System.out.println(leg);
+			//System.out.println(outer.leg);
+		}
+	//	public  static void show2(){} 成员内部类不能直接定义静态方法
+		
+	}
+}
+//继承内部类
+package com.ming;
+import com.huang.ChengYuan;
+public class JiChengChengYuanNeiBuLei extends ChengYuan.Inner {
+	
+	public JiChengChengYuanNeiBuLei(ChengYuan out) {
+		out.super();//ok
+		//new ChengYuan().super();//ok
+		System.out.println("继承了内部类");
+		//out.new Inner(); bad
+	}
+       public static void main(String[] args) {
+		JiChengChengYuanNeiBuLei j = new JiChengChengYuanNeiBuLei(new ChengYuan());
+		System.out.println(j.Ileg);
+		System.out.println(j.Ieyes);
+	}
+}

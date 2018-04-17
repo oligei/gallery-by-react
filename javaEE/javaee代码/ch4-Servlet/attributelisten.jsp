@@ -1,0 +1,9 @@
+<html>
+<head><title>listener学习</title></head>
+<body>
+	<% 
+		application.setAttribute("tom","1234");
+	 %>
+	 <h1>增加了一个application范围的属性！</h1>
+</body>
+</html>
