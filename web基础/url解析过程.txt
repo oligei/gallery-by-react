@@ -1,0 +1,47 @@
+https://blog.csdn.net/cloudox_/article/details/69669035
+
+https://blog.csdn.net/sinat_29912455/article/details/51135508
+
+https://blog.csdn.net/wdzxl198/article/details/11265475
+
+https://www.cnblogs.com/heshan1992/p/6829309.html
+
+-----------------------------------------------
+
+1、解析输入内容
+   内容检查，当协议或主机名不合法时，浏览器会将地址栏中输入的文字传给默认的搜索引擎
+   编码转换 ，非ASCII的字符，如果有的话，浏览器会对主机名部分使用 Punycode 编码
+
+2、hsts
+   一个列表，用于存储https访问的网站
+   检查是否https访问的网站
+
+3、dns--------
+   域名解析获得ip
+       本机
+          浏览器缓存
+          本地域名服务器
+       网络
+          两种查询方式
+              查询过程应用了arp协议
+              DNS回应报文→UDP→IP→MAC→→请求域名解析的主机
+              arp ip同mac地址绑定
+
+4、握手环节
+   三次握手-----
+
+   TLS 握手
+      加密相关的信息，公钥私钥
+
+5、数据传输-----
+  请求
+  1、浏览器向域名发出GET方法报文；
+  2、该GET方法报文通过TCP->IP（DNS）->MAC（ARP）->网关->目的主机；
+  响应
+  3、目的主机收到数据帧，通过IP->TCP->HTTP，HTTP协议单元会回应HTTP协议格式封装好的HTML形式数据；
+  4、该HTML数据通过TCP->IP（DNS）->MAC（ARP）->网关->我的主机；
+  解析
+  5、我的主机收到数据帧，通过IP->TCP->HTTP->浏览器，浏览器以网页形式显示HTML内容。
+
+
+6、四次挥手-----

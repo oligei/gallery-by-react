@@ -1,0 +1,25 @@
+﻿https://www.cnblogs.com/wqhwe/p/5407468.html
+
+https://www.zhihu.com/question/19577317
+
+https://jingyan.baidu.com/article/454316ab14553ff7a7c03a9c.html
+---------------------------------------------------------------
+区别
+   1、概念
+      http    超文本传输协议
+      https   基于安全套接字层的超文本传输协议
+
+   2、安全性
+      http:无状态链接，明文传输
+      https:基于http采用ssl进行加密传输   应用层与传输层间加了一层ssl  
+
+   3、访问
+      访问路径  http://url    https://url，HTTPS站点会在地址栏上显示一把绿色小锁
+      访问端口  http--80      https--443
+
+   4、
+      https需要到ca申请证书，证书贵
+      htpps功能：数据加密、身份认证
+      https因加密效率低，一般用在对信息安全要求比较高的环境，如银行
+
+   HTTP+加密+认证+完整性保护=HTTPS
